@@ -5,4 +5,5 @@
 ## TODO: ##
 - recipe snippets
 - machine snippets
-- better syntax highlightl
+- better syntax highlight
+- import syntax for shell and python funtions
