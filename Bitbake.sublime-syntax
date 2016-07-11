@@ -7,6 +7,7 @@ file_extensions:
   - bbappend
   - conf
   - inc
+  - bbclass
 scope: source.bitbake
 variables:
   identifier_continue: '[[:alpha:]_]'
@@ -77,7 +78,8 @@ contexts:
                 |SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|
                 |MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|
                 |KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|
-                |DEFAULTTUNE|IMAGE_CLASSES)_?"
+                |DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|
+                |EXTRA_OECONF|EXTRA_OEMAKE)_?"
       scope: support.constant.bitbake
 
   short_variables:
