@@ -6,6 +6,7 @@ file_extensions:
   - bb
   - bbappend
   - conf
+  - inc
 scope: source.bitbake
 variables:
   identifier_continue: '[[:alpha:]_]'
