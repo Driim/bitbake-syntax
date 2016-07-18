@@ -88,8 +88,12 @@ contexts:
 
 
   functions:
-    - match: '([a-z_]{2,})\s?(?=\(\s*\))'
+    - match: '([a-z_]{2,})\s?(\(\s*\))\s?(?=\{)'
       scope: entity.name.function.bitbake
+      push: Packages/ShellScriptImproved/Shell-Unix-Generic.sublime-syntax
+      with_prototype:
+        - match: ^(?=\})
+          pop: true
 
   other_functions:
     - match: '([a-z_]{2,})\s?(?=\[\w*\])'
@@ -100,5 +104,5 @@ contexts:
       scope: keyword.control.bitbake
 
   operators:
-    - match: '\s*(=|\?\=|\+\=|\:\=)\s*'
+    - match: '\s*(=|\?\=|\+\=|\:\=|\?\?\=)\s*'
       scope: keyword.operator.bitbake
