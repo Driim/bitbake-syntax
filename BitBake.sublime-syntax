@@ -92,7 +92,7 @@ contexts:
       scope: entity.name.function.bitbake
       push: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
       with_prototype:
-        - match: ^(?=\})
+        - match: (?=\})
           pop: true
 
   other_functions:
