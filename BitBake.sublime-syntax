@@ -104,5 +104,5 @@ contexts:
       scope: keyword.control.bitbake
 
   operators:
-    - match: '\s*(=|\?\=|\+\=|\:\=|\?\?\=)\s*'
+    - match: '\s*(=|\?\=|\+\=|\.\=|\:\=|\?\?\=)\s*'
       scope: keyword.operator.bitbake
