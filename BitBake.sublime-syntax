@@ -20,31 +20,36 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.begin.bitbake
       push: double_quoted_string
+      with_prototype:
+      - match: '"'
+        scope: punctuation.definition.string.end.bitbake
+        pop: true
 
     # Comments begin with a '#' and finish at the end of the line
-    - match: '#'
+    - match: '^#'
       scope: punctuation.definition.comment.bitbake
       push: line_comment
+      with_prototype:
+      - match: '$'
+        pop: true
 
-    - match: '(\w+\s*\(\)\s*)(?=\{)'
+    # Functions
+    - match: '^[^\d](\w+\s*\(\)\s*)(?={)'
       scope: entity.name.function.bitbake
       push: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
       with_prototype:
-        - match: (?=\})
-          pop: true
+      - match: '(?=})'
+        pop: true
 
     - include: variable_placeholder
-#    - include: var_placeholder
+    # - include: var_placeholder
     - include: magic_variable_names
     - include: variable_names
     - include: short_variables
     - include: other_functions
     - include: additional_keywords
     - include: operators
-
-    # Numbers
-    - match: '\b(-)?[0-9.]+\b'
-      scope: constant.numeric.bitbake
+    - include: numbers
 
     - match: '\s*(inherit|include|require)\s+(?=[[:alpha:]])'
       scope: keyword.control.import.bitbake
@@ -53,16 +58,11 @@ contexts:
     - meta_scope: string.quoted.double.bitbake
     - match: '\\.'
       scope: constant.character.escape.bitbake
-    - match: '"'
-      scope: punctuation.definition.string.end.bitbake
-      pop: true
     - include: variable_placeholder
     - include: magic_variable_names
 
   line_comment:
     - meta_scope: comment.line.bitbake
-    - match: $
-      pop: true
 
   variable_placeholder:
     - match: '(\$)(\{)(\w*(\}))'
@@ -102,3 +102,7 @@ contexts:
   operators:
     - match: '\s*(=|\?\=|\+\=|\.\=|\:\=|\?\?\=)\s*'
       scope: keyword.operator.bitbake
+
+  numbers:
+    - match: '\b(-)?[0-9.]+\b'
+      scope: constant.numeric.bitbake
