@@ -16,8 +16,7 @@ variables:
 
 contexts:
   main:
-    # Strings begin and end with quotes, and use backslashes as an escape
-    # character
+    # Strings begin and end with quotes, and use backslashes as an escape character
     - match: '"'
       scope: punctuation.definition.string.begin.bitbake
       push: double_quoted_string
@@ -27,12 +26,18 @@ contexts:
       scope: punctuation.definition.comment.bitbake
       push: line_comment
 
+    - match: '(\w+\s*\(\)\s*)(?=\{)'
+      scope: entity.name.function.bitbake
+      push: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
+      with_prototype:
+        - match: (?=\})
+          pop: true
+
     - include: variable_placeholder
 #    - include: var_placeholder
     - include: magic_variable_names
     - include: variable_names
     - include: short_variables
-    - include: functions
     - include: other_functions
     - include: additional_keywords
     - include: operators
@@ -85,15 +90,6 @@ contexts:
   short_variables:
     - match: \b(PR|PV\PN)\b
       scope: support.constant.bitbake
-
-
-  functions:
-    - match: '(\w+\s*\(\)\s*)(?=\{)'
-      scope: entity.name.function.bitbake
-      push: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
-      with_prototype:
-        - match: (?=\})
-          pop: true
 
   other_functions:
     - match: '([a-z_]{2,})\s?(?=\[\w*\])'
