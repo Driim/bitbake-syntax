@@ -88,9 +88,9 @@ contexts:
 
 
   functions:
-    - match: '([a-z_]{2,})\s?(\(\s*\))\s?(?=\{)'
+    - match: '(\w+\s*\(\)\s*)(?=\{)'
       scope: entity.name.function.bitbake
-      push: Packages/ShellScriptImproved/Shell-Unix-Generic.sublime-syntax
+      push: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
       with_prototype:
         - match: ^(?=\})
           pop: true
