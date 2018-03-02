@@ -4,95 +4,111 @@
 # See http://www.sublimetext.com/docs/3/syntax.html
 
 name: BitBake
-file_extensions: [bb, bbappend, conf, inc, bbclass]
+file_extensions: [bb, bbappend, bbclass, conf, inc]
 scope: source.bitbake
 
 contexts:
   main:
-    # Strings begin and end with quotes, and use backslashes as an escape character
-    - match: \"
+    - match: '"'
+      scope: punctuation.definition.string.begin
       push: double_quoted_string
       with_prototype:
-      - match: \"
+      - match: '"'
+        scope: punctuation.definition.string.end
         pop: true
 
-    # Comments begin with a '#' and finish at the end of the line
-    - match: ^#
+    - match: "'"
+      scope: punctuation.definition.string.begin
+      push: single_quoted_string
+      with_prototype:
+      - match: "'"
+        scope: punctuation.definition.string.end
+        pop: true
+
+    - match: '^#'
       push: line_comment
       with_prototype:
-      - match: $
+      - match: '$'
         pop: true
 
-    # Functions
-    - match: ^[^\d](\w+\s*\(\)\s*)(?={)
+    - match: '^[^\d](\w+\s*\(\)\s*)(?={)'
       scope: entity.name.function.bitbake
       push: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
       with_prototype:
-      - match: (?=})
+      - match: '(?=})'
         pop: true
 
     - include: variable_placeholder
-    # - include: var_placeholder
-    # - include: magic_variable_names
-    - include: variable_names
-    # - include: short_variables
-    # - include: other_functions
+    - include: reserved
+    - include: import_keywords
     - include: additional_keywords
     - include: operators
     - include: numbers
+    - include: suffix
 
-    - match: '\s*(inherit|include|require)\s+(?=[[:alpha:]])'
-      scope: keyword.control.import.bitbake
+  prototype:
+    - include: line_comment
+
+  single_quoted_string:
+    # - include: variable_placeholder
+    - meta_scope: string.quoted.single.bitbake
+    - match: '\\.'
+      scope: constant.character.escape.bitbake
 
   double_quoted_string:
+    # - include: variable_placeholder
     - meta_scope: string.quoted.double.bitbake
     - match: '\\.'
       scope: constant.character.escape.bitbake
-    - include: variable_placeholder
-    # - include: magic_variable_names
+    - match: '\${@'
+      push: Packages/Python/Python.sublime-syntax
+      with_prototype:
+      - match: '(?=})'
+        pop: true
 
   line_comment:
     - meta_scope: comment.line.bitbake
 
   variable_placeholder:
-    - match: '(\$)(\{)(\w*(\}))'
-      scope: variable.parameter.bitbake
+    - match: '\${'
+      push: variable
+      with_prototype:
+      - match: '(?=})'
+        pop: true
 
-  # var_placeholder:
-  #   - match: '^[A-Z_]*'
-  #     scope: variable.bitbake
-  #   - include: variable_names
+  variable:
+    - meta_scope: variable.other.bitbake
+    - match: '\W'
+      scope: invalid.illegal.bitbake
 
+  reserved:
+    - match: "(DESCRIPTION|SECTION|LICENSE|LIC_FILES_CHKSUM|HOMEPAGE|PROVIDES|DEPENDS|SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|EXTRA_OECONF|EXTRA_OEMAKE|PR|PV|PN|S|B|D|EXTRA_OECMAKE)"
+      scope: variable.language.bitbake
 
-  # magic_variable_names:
-  #   - match: \b(AUTOINC)\b
-  #     scope: support.variable.bitbake
+  suffix:
+    - match: '\B(_prepend|_append|_remove)\b'
+      scope: markup.italic.bitbake
 
-  variable_names:
-    - match: "^(DESCRIPTION|SECTION|LICENSE|LIC_FILES_CHKSUM|HOMEPAGE|PROVIDES|DEPENDS|
-                |SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|
-                |MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|
-                |KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|
-                |DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|
-                |EXTRA_OECONF|EXTRA_OEMAKE|PR|PV|PN|S|B|D)"
-      scope: support.constant.bitbake
-
-  # short_variables:
-  #   - match: \b(PR|PV\PN)\b
-  #     scope: support.constant.bitbake
-
-  # other_functions:
-  #   - match: '([a-z_]{2,})\s?(?=\[\w*\])'
-  #     scope: entity.name.function.bitbake
+  import_keywords:
+    - match: '^(inherit|include|require)\s+(?=\w+)'
+      scope: keyword.control.import.bitbake
 
   additional_keywords:
-    - match: '\s*(addtask|before|after)\s+(?=\w+)'
-      scope: keyword.control.bitbake
+    - match: '^(deltask|addtask|before|after)\s+(?=\w+)'
+      scope: keyword.other.bitbake
 
   operators:
-    - match: '\s*(=|\?\=|\+\=|\.\=|\:\=|\?\?\=)\s*'
+    - match: '(?<=\w| )(=|\?=|\+=|\.=|\:=|\?\?=)(?=\w| )'
       scope: keyword.operator.bitbake
 
   numbers:
-    - match: '\b(-)?[0-9.]+\b'
+    - match: '(?<=\A|\s|\=)(\+|\-)?\d+\.?\d*\b(\s|\Z)'
       scope: constant.numeric.bitbake
+
+  # inline_python:
+  #   - clear_scopes: true
+  #   - match: '\${@'
+  #     push: Packages/Python/Python.sublime-syntax
+  #     with_prototype:
+  #     - match: '(?=})'
+  #       pop: true
