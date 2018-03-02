@@ -7,103 +7,105 @@ name: BitBake
 file_extensions: [bb, bbappend, bbclass, conf, inc]
 scope: source.bitbake
 
+variables:
+  operators: '(=|\+=|=\+|\?=|=\?|\?\?=|=\?\?|\.=|\:=)'
+
 contexts:
   main:
-    - match: '"'
-      scope: punctuation.definition.string.begin
-      push: double_quoted_string
-      with_prototype:
-      - match: '"'
-        scope: punctuation.definition.string.end
-        pop: true
+    - include: functions
+    - include: assignments
+    - include: comments
 
-    - match: "'"
-      scope: punctuation.definition.string.begin
-      push: single_quoted_string
-      with_prototype:
-      - match: "'"
-        scope: punctuation.definition.string.end
-        pop: true
+    # - match: '"'
+    #   scope: punctuation.definition.string.begin
+    #   push: double_quoted_string
+    #   with_prototype:
+    #   - match: '"'
+    #     scope: punctuation.definition.string.end
+    #     pop: true
 
-    - match: '^#'
-      push: line_comment
-      with_prototype:
-      - match: '$'
-        pop: true
+    # - match: "'"
+    #   scope: punctuation.definition.string.begin
+    #   push: single_quoted_string
+    #   with_prototype:
+    #   - match: "'"
+    #     scope: punctuation.definition.string.end
+    #     pop: true
 
-    - match: '^[^\d](\w+\s*\(\)\s*)(?={)'
-      scope: entity.name.function.bitbake
-      push: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
-      with_prototype:
-      - match: '(?=})'
-        pop: true
 
-    - include: variable_placeholder
-    - include: reserved
-    - include: import_keywords
-    - include: additional_keywords
-    - include: operators
-    - include: numbers
-    - include: suffix
 
-  prototype:
-    - include: line_comment
+    # BitBake-Style Python Functions
+    # - match: '^\s*python\s+\w*\s*\(\)\s*(?={)'
+    #   scope: entity.name.function.bitbake
+    #   set: Packages/Python/Python.sublime-syntax
+    #   with_prototype:
+    #   - match: '(?=})'
+    #     pop: true
 
-  single_quoted_string:
-    # - include: variable_placeholder
-    - meta_scope: string.quoted.single.bitbake
-    - match: '\\.'
-      scope: constant.character.escape.bitbake
+    # - match: '^\s*python(?=\s+\w*\s*\(\)\s*{)'
+    #   scope: punctuation.section.function.begin.bitbake
+    #   set: Packages/Python/Python.sublime-syntax
+    #   with_prototype:
+    #   - match: '(?=})'
+    #     pop: true
 
-  double_quoted_string:
-    # - include: variable_placeholder
-    - meta_scope: string.quoted.double.bitbake
-    - match: '\\.'
-      scope: constant.character.escape.bitbake
-    - match: '\${@'
-      push: Packages/Python/Python.sublime-syntax
-      with_prototype:
-      - match: '(?=})'
-        pop: true
+    # Shell Functions
+    # - match: '^\s*\w+\s*\(\)\s*(?={)'
+    #   scope: entity.name.function.bitbake
+    #   set: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
+    #   with_prototype:
+    #   - match: '(?=})'
+    #     pop: true
 
-  line_comment:
-    - meta_scope: comment.line.bitbake
+  #   - include: variable_placeholder
+  #   - include: reserved
+  #   - include: import_keywords
+  #   - include: additional_keywords
+  #   - include: operators
+  #   - include: numbers
+  #   - include: suffix
 
-  variable_placeholder:
-    - match: '\${'
-      push: variable
-      with_prototype:
-      - match: '(?=})'
-        pop: true
+  # prototype:
+  #   - include: line_comment
 
-  variable:
-    - meta_scope: variable.other.bitbake
-    - match: '\W'
-      scope: invalid.illegal.bitbake
+  # line_comment:
+  #   - meta_scope: comment.line.bitbake
 
-  reserved:
-    - match: "(DESCRIPTION|SECTION|LICENSE|LIC_FILES_CHKSUM|HOMEPAGE|PROVIDES|DEPENDS|SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|EXTRA_OECONF|EXTRA_OEMAKE|PR|PV|PN|S|B|D|EXTRA_OECMAKE)"
-      scope: variable.language.bitbake
+  # variable_placeholder:
+  #   - match: '\${'
+  #     push: variable
+  #     with_prototype:
+  #     - match: '(?=})'
+  #       pop: true
 
-  suffix:
-    - match: '\B(_prepend|_append|_remove)\b'
-      scope: markup.italic.bitbake
+  # variable:
+  #   - meta_scope: variable.other.bitbake
+  #   - match: '\W'
+  #     scope: invalid.illegal.bitbake
 
-  import_keywords:
-    - match: '^(inherit|include|require)\s+(?=\w+)'
-      scope: keyword.control.import.bitbake
+  # reserved:
+  #   - match: "(DESCRIPTION|SECTION|LICENSE|LIC_FILES_CHKSUM|HOMEPAGE|PROVIDES|DEPENDS|SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|EXTRA_OECONF|EXTRA_OEMAKE|PR|PV|PN|S|B|D|EXTRA_OECMAKE)"
+  #     scope: variable.language.bitbake
 
-  additional_keywords:
-    - match: '^(deltask|addtask|before|after)\s+(?=\w+)'
-      scope: keyword.other.bitbake
+  # suffix:
+  #   - match: '\B(_prepend|_append|_remove)\b'
+  #     scope: markup.italic.bitbake
 
-  operators:
-    - match: '(?<=\w| )(=|\?=|\+=|\.=|\:=|\?\?=)(?=\w| )'
-      scope: keyword.operator.bitbake
+  # import_keywords:
+  #   - match: '^(inherit|include|require)\s+(?=\w+)'
+  #     scope: keyword.control.import.bitbake
 
-  numbers:
-    - match: '(?<=\A|\s|\=)(\+|\-)?\d+\.?\d*\b(\s|\Z)'
-      scope: constant.numeric.bitbake
+  # additional_keywords:
+  #   - match: '^(deltask|addtask|before|after)\s+(?=\w+)'
+  #     scope: keyword.other.bitbake
+
+  # operators:
+  #   - match: '(?<=\w| )(=|\?=|\+=|\.=|\:=|\?\?=)(?=\w| )'
+  #     scope: keyword.operator.bitbake
+
+  # numbers:
+  #   - match: '(?<=\A|\s|\=)(\+|\-)?\d+\.?\d*\b(\s|\Z)'
+  #     scope: constant.numeric.bitbake
 
   # inline_python:
   #   - clear_scopes: true
@@ -112,3 +114,65 @@ contexts:
   #     with_prototype:
   #     - match: '(?=})'
   #       pop: true
+
+  functions:
+    - match: '^\s*(python)\s+(\w*)\s*(?=\(\)\s*{)'
+      captures:
+        1: storage.type.bitbake
+        2: entity.name.function.bitbake
+      set: Packages/Python/Python.sublime-syntax
+      with_prototype:
+      - match: '(?=})'
+        pop: true
+
+    - match: '^\s*(\w+)\s*\(\)\s*(?={)'
+      captures:
+        1: entity.name.function.bitbake
+      set: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
+      with_prototype:
+      - match: '(?=})'
+        pop: true
+
+  assignments:
+    - match: '^\s*(\w+)\s*{{operators}}'
+      captures:
+        1: variable.language.bitbake
+      set:
+        - include: strings
+
+  strings:
+    - match: '"'
+      scope: punctuation.definition.string.begin
+      push: string_single_quoted
+      with_prototype:
+      - match: '"'
+        scope: punctuation.definition.string.end
+        pop: true
+
+    - match: "'"
+      scope: punctuation.definition.string.begin
+      push: string_double_quoted
+      with_prototype:
+      - match: "'"
+        scope: punctuation.definition.string.end
+        pop: true
+
+  string_double_quoted:
+    - meta_scope: string.quoted.single.bitbake
+    - match: '\\.'
+      scope: constant.character.escape.bitbake
+
+  string_single_quoted:
+    - meta_scope: string.quoted.double.bitbake
+    - match: '\\.'
+      scope: constant.character.escape.bitbake
+
+  comments:
+    - match: '^#'
+      push: line_comment
+      with_prototype:
+      - match: '$'
+        pop: true
+
+  line_comment:
+    - meta_scope: comment.line.bitbake
