@@ -55,7 +55,7 @@ contexts:
         pop: true
 
   variable_assignments:
-    - match: '^\s*(?:(export)\s+)?([\w\-]+(?:\${[\w\-]+})?)(?=\s*{{operators_assignment}})'
+    - match: '^\s*(?:(export)\s+)?([\w\-]+(?:\${[\w\-]+})?)(\[\w+\])?(\-\w+)?(?=\s*{{operators_assignment}})'
       captures:
         1: storage.modifier.bitbake
         2: variable.other.bitbake
