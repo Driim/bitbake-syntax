@@ -8,9 +8,8 @@ file_extensions: [bb, bbappend, bbclass, conf, inc]
 scope: source.bitbake
 
 variables:
-  operators_assignment: '(=|\+=|=\+|\?=|=\?|\?\?=|=\?\?|\.=|\:=)'
-  reserved: '(DESCRIPTION|SECTION|LICENSE|LIC_FILES_CHKSUM|HOMEPAGE|PROVIDES|DEPENDS|SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|EXTRA_OECONF|EXTRA_OEMAKE|PR|PV|PN|S|B|D|EXTRA_OECMAKE|PYTHON_BASEVERSION)'
-  keywords: '(addtask|deltask)'
+  assignment_operators: '(=|\+=|=\+|\?=|=\?|\?\?=|=\?\?|\.=|\:=)'
+  # reserved: '(DESCRIPTION|SECTION|LICENSE|LIC_FILES_CHKSUM|HOMEPAGE|PROVIDES|DEPENDS|SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|EXTRA_OECONF|EXTRA_OEMAKE|PR|PV|PN|S|B|D|EXTRA_OECMAKE|PYTHON_BASEVERSION)'
 
 contexts:
   main:
@@ -55,25 +54,25 @@ contexts:
         pop: true
 
   variable_assignments:
-    - match: '^\s*(?:(export)\s+)?([\w\-]+(?:\${[\w\-]+})?)(?=\s*{{operators_assignment}})'
+    - match: '^\s*(?:(export)\s+)?[^\d]([\w\-\/\$\{\}\[\]]+)\s*({{assignment_operators}})'
       captures:
         1: storage.modifier.bitbake
         2: variable.other.bitbake
-      push: assignment_scope
+        3: storage.modifier.bitbake
+        4: storage.modifier.bitbake
+        5: keyword.operator.assignment.bitbake
+      push: variable_assignment_scope
 
   sharing_functionality:
-    - match: '^\s*(inherit|include|require|INHERIT)\b'
+    - match: '^\s*(inherit|include|require)\b'
       captures:
         1: keyword.control.import.bitbake
       push: sharing_functionality_scope
 
 # ------------------------------------------------------------------------------
 
-  assignment_scope:
-    - match: '{{operators_assignment}}'
-      scope: keyword.operator.assignment.bitbake
+  variable_assignment_scope:
     - include: strings
-    - include: number
     - match: '\n'
       pop: true
 
