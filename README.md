@@ -1,4 +1,4 @@
-# Sublime Text 3 - Bitbake Syntax Package #
+# Sublime Text 3 - BitBake Syntax Package #
 
 - syntax highlightling.
 
