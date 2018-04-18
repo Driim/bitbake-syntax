@@ -37,6 +37,15 @@ contexts:
         pop: true
 
   function_defnitions:
+    - match: '^(def)\s+(\w*)\s*\(.*\)\s*:\s*$'
+      captures:
+        1: storage.type.bitbake
+        2: entity.name.function.bitbake
+      set: Packages/Python/Python.sublime-syntax
+      with_prototype:
+      - match: '^(?=\S+)'
+        pop: true
+
     - match: '^\s*(python)\s+(\S*)\s*\(\)\s*{'
       captures:
         1: storage.type.bitbake
