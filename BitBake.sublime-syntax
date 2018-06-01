@@ -8,8 +8,7 @@ file_extensions: [bb, bbappend, bbclass, conf, inc]
 scope: source.bitbake
 
 variables:
-  assignment_operators: '(\?\?\=|\=\?\?|\+\=|\=\+|\?\=|\=\?|\.\=|\=\.|\:\=|\=\:|\=)'
-  # reserved: '(DESCRIPTION|SECTION|LICENSE|LIC_FILES_CHKSUM|HOMEPAGE|PROVIDES|DEPENDS|SRC_URI|SRCREV|PACKAGE_ARCH|COMPATIBLE_MACHINE|TCLIBC|FILESEXTRAPATHS|MACHINE_FEATURES|IMAGE_FSTYPES|UBOOT_BINARY|EXTRA_IMAGEDEPENDS|MACHINE_FEATURES|KERNEL_IMAGETYPE|KERNEL_DEVICETREE|PREFERRED_PROVIDER|PREFERRED_VERSION|DEFAULTTUNE|IMAGE_CLASSES|SUMMARY|COMPATIBLE_HOST|FILES|PACKAGES|RDEPENDS|EXTRA_OECONF|EXTRA_OEMAKE|PR|PV|PN|S|B|D|EXTRA_OECMAKE|PYTHON_BASEVERSION)'
+  assignment_operators: '(\?\?\=|\?\=|\:\=|\+\=|\=\+|\.\=|\=\.|\=)'
 
 contexts:
   main:
@@ -19,12 +18,9 @@ contexts:
     - include: function_defnitions
     - include: variable_assignments
 
+    # Highlight everything uncaptured during development
     - match: '\S'
-      set:
-      - meta_scope: invalid.illegal
-      with_prototype:
-      - match: '\n'
-        pop: true
+      scope: invalid.illegal
 
 # ------------------------------------------------------------------------------
 
@@ -37,7 +33,7 @@ contexts:
         pop: true
 
   function_defnitions:
-    - match: '^(def)\s+(\w*)\s*\(.*\)\s*:\s*$'
+    - match: '^(def)\s+(\S+)\s*\(.*\)\s*:\s*$'
       captures:
         1: storage.type.bitbake
         2: entity.name.function.bitbake
@@ -46,21 +42,21 @@ contexts:
       - match: '^(?=\S+)'
         pop: true
 
-    - match: '^\s*(python)\s+(\S*)\s*\(\)\s*{'
+    - match: '^(python)(\s+(\S+)\s*)?\(\)\s*{'
       captures:
         1: storage.type.bitbake
         2: entity.name.function.bitbake
       set: Packages/Python/Python.sublime-syntax
       with_prototype:
-      - match: '}'
+      - match: '}(?=\s*)$'
         pop: true
 
-    - match: '^\s*(\S+)\s*\(\)\s*{'
+    - match: '^(\S+)\s*\(\)\s*{'
       captures:
         1: entity.name.function.bitbake
       set: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
       with_prototype:
-      - match: '}'
+      - match: '}(?=\s*)$'
         pop: true
 
   variable_assignments:
@@ -72,15 +68,13 @@ contexts:
       push: variable_assignment_scope
 
   sharing_functionality:
-    - match: '^\s*(inherit|include|require)\b'
-      captures:
-        1: keyword.control.import.bitbake
+    - match: '^\s*\b(inherit|include|require)\b'
+      scope: keyword.control.import.bitbake
       push: sharing_functionality_scope
 
   task_modification:
-    - match: '^\s*(addtask|deltask)\b'
-      captures:
-        1: keyword.control.conditional.bitbake
+    - match: '^\s*\b(addtask|deltask)\b'
+      scope: keyword.control.conditional.bitbake
       push: task_modification_scope
 
 # ------------------------------------------------------------------------------
@@ -96,8 +90,7 @@ contexts:
 
   task_modification_scope:
     - match: '\b(before|after)\b'
-      captures:
-        1: keyword.control.conditional.bitbake
+      scope: keyword.control.conditional.bitbake
     - match: '\n'
       pop: true
 
