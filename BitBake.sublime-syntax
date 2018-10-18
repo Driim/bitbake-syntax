@@ -1,7 +1,8 @@
 %YAML 1.2
 ---
 
-# See http://www.sublimetext.com/docs/3/syntax.html
+# https://www.sublimetext.com/docs/3/syntax.html
+# https://www.sublimetext.com/docs/3/scope_naming.html
 
 name: BitBake
 file_extensions: [bb, bbappend, bbclass, conf, inc]
@@ -9,10 +10,14 @@ scope: source.bitbake
 
 variables:
   assignment_operators: '(\?\?\=|\?\=|\:\=|\+\=|\=\+|\.\=|\=\.|\=)'
+  builtin_variables: '()'
 
 contexts:
-  main:
+  prototype:
     - include: comments
+    - include: inline_python
+
+  main:
     - include: sharing_functionality
     - include: task_modification
     - include: function_defnitions
@@ -105,18 +110,40 @@ contexts:
 
   string_single_quoted:
     - meta_scope: string.quoted.single.bitbake
-    - include: string_escaped_char
     - match: "'"
-      scope: punctuation.definition.string.end
+      scope: punctuation.definition.string.end.bitbake
       pop: true
+    - include: access_variable
+    - include: string_escape_char
 
   string_double_quoted:
     - meta_scope: string.quoted.double.bitbake
-    - include: string_escaped_char
     - match: '"'
-      scope: punctuation.definition.string.end
+      scope: punctuation.definition.string.end.bitbake
       pop: true
+    - include: access_variable
+    - include: string_escape_char
 
-  string_escaped_char:
+  string_escape_char:
     - match: '\\(.|\n)'
       scope: constant.character.escape.bitbake
+
+  inline_python:
+    - match: '\${@'
+      embed: Packages/Python/Python.sublime-syntax
+      escape: '(?=})'
+
+  access_variable:
+    - match: '\${(?={{builtin_variables}})'
+      push:
+      - meta_scope: variable.language.bitbake
+      with_prototype:
+      - match: '}'
+        pop: true
+
+    - match: '\${'
+      push:
+      - meta_scope: variable.parameter.bitbake
+      with_prototype:
+      - match: '}'
+        pop: true
