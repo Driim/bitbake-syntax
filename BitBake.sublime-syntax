@@ -15,7 +15,6 @@ variables:
 contexts:
   prototype:
     - include: comments
-    - include: inline_python
 
   main:
     - include: sharing_functionality
@@ -24,7 +23,7 @@ contexts:
     - include: variable_assignments
 
     # Highlight everything uncaptured during development
-    - match: '\S'
+    - match: '.'
       scope: invalid.illegal
 
 # ------------------------------------------------------------------------------
@@ -102,27 +101,25 @@ contexts:
   strings:
     - match: "'"
       scope: punctuation.definition.string.begin.bitbake
-      push: string_single_quoted
+      push:
+      - meta_scope: string.quoted.single.bitbake
+      - include: inline_python
+      - include: access_variable
+      - include: string_escape_char
+      - match: "'"
+        scope: punctuation.definition.string.end.bitbake
+        pop: true
 
     - match: '"'
       scope: punctuation.definition.string.begin.bitbake
-      push: string_double_quoted
-
-  string_single_quoted:
-    - meta_scope: string.quoted.single.bitbake
-    - match: "'"
-      scope: punctuation.definition.string.end.bitbake
-      pop: true
-    - include: access_variable
-    - include: string_escape_char
-
-  string_double_quoted:
-    - meta_scope: string.quoted.double.bitbake
-    - match: '"'
-      scope: punctuation.definition.string.end.bitbake
-      pop: true
-    - include: access_variable
-    - include: string_escape_char
+      push:
+      - meta_scope: string.quoted.double.bitbake
+      - include: inline_python
+      - include: access_variable
+      - include: string_escape_char
+      - match: '"'
+        scope: punctuation.definition.string.end.bitbake
+        pop: true
 
   string_escape_char:
     - match: '\\(.|\n)'
@@ -134,16 +131,8 @@ contexts:
       escape: '(?=})'
 
   access_variable:
-    - match: '\${(?={{builtin_variables}})'
-      push:
-      - meta_scope: variable.language.bitbake
-      with_prototype:
-      - match: '}'
-        pop: true
+    - match: '\${{{builtin_variables}}}'
+      scope: variable.language.bitbake
 
-    - match: '\${'
-      push:
-      - meta_scope: variable.parameter.bitbake
-      with_prototype:
-      - match: '}'
-        pop: true
+    - match: '\${\w+}'
+      scope: variable.other.bitbake
