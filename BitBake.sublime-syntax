@@ -69,34 +69,28 @@ contexts:
         1: storage.modifier.bitbake
         2: variable.other.bitbake
         3: keyword.operator.assignment.bitbake
-      push: variable_assignment_scope
+      push:
+      - include: strings
+      - match: '\n'
+        pop: true
 
   sharing_functionality:
     - match: '^\s*\b(inherit|include|require)\b'
       scope: keyword.control.import.bitbake
-      push: sharing_functionality_scope
+      push:
+      - match: '\n'
+        pop: true
 
   task_modification:
     - match: '^\s*\b(addtask|deltask)\b'
       scope: keyword.control.conditional.bitbake
-      push: task_modification_scope
+      push:
+      - match: '\b(before|after)\b'
+        scope: keyword.control.conditional.bitbake
+      - match: '\n'
+        pop: true
 
 # ------------------------------------------------------------------------------
-
-  variable_assignment_scope:
-    - include: strings
-    - match: '\n'
-      pop: true
-
-  sharing_functionality_scope:
-    - match: '\n'
-      pop: true
-
-  task_modification_scope:
-    - match: '\b(before|after)\b'
-      scope: keyword.control.conditional.bitbake
-    - match: '\n'
-      pop: true
 
   strings:
     - match: "'"
@@ -122,7 +116,7 @@ contexts:
         pop: true
 
   string_escape_char:
-    - match: '\\(.|\n)'
+    - match: '\\[\S\s]' # Use whitespace and non-whitespace because '.' doesn't match line breaks
       scope: constant.character.escape.bitbake
 
   inline_python:
