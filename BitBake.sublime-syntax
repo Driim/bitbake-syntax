@@ -29,65 +29,66 @@ contexts:
 # ------------------------------------------------------------------------------
 
   comments:
-    - match: '^\s*#'
+    - match: '#'
       set:
       - meta_scope: comment.line.bitbake
       with_prototype:
       - match: '$'
         pop: true
 
+  # TODO: Highlight parameters
   function_defnitions:
-    - match: '^(def)\s+(\S+)\s*\(.*\)\s*:\s*$'
+    - match: '^(def)\s+(\w+)\s*\(.*\)\s*:$'
       captures:
         1: storage.type.bitbake
         2: entity.name.function.bitbake
       set: Packages/Python/Python.sublime-syntax
       with_prototype:
-      - match: '^(?=\S+)'
+      - match: '^(?=\S)'
         pop: true
 
-    - match: '^(python)(\s+(\S+)\s*)?\(\)\s*{'
+    - match: '^(python)(?:\s+(\w+))?\s*\(\)\s*{$'
       captures:
         1: storage.type.bitbake
         2: entity.name.function.bitbake
       set: Packages/Python/Python.sublime-syntax
       with_prototype:
-      - match: '}(?=\s*)$'
+      - match: '^}$'
         pop: true
 
-    - match: '^(\S+)\s*\(\)\s*{'
+    - match: '^(\w+)\s*\(\)\s*{$'
       captures:
         1: entity.name.function.bitbake
       set: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
       with_prototype:
-      - match: '}(?=\s*)$'
+      - match: '^}$'
         pop: true
 
+  # TODO: Highlight builtin variables
   variable_assignments:
-    - match: '^\s*(?:(export)\s+)?(\S+)\s*({{assignment_operators}})'
+    - match: '^(?:(export)\s+)?\S+\s*{{assignment_operators}}'
       captures:
         1: storage.modifier.bitbake
-        2: variable.other.bitbake
-        3: keyword.operator.assignment.bitbake
+        2: keyword.operator.assignment.bitbake
       push:
       - include: strings
-      - match: '\n'
+      - match: '$'
         pop: true
 
   sharing_functionality:
-    - match: '^\s*\b(inherit|include|require)\b'
+    - match: '^\b(inherit|include|require)\b'
       scope: keyword.control.import.bitbake
       push:
-      - match: '\n'
+      - match: '$'
         pop: true
 
   task_modification:
-    - match: '^\s*\b(addtask|deltask)\b'
+    - match: '^\b(addtask|deltask)\b'
       scope: keyword.control.conditional.bitbake
       push:
       - match: '\b(before|after)\b'
         scope: keyword.control.conditional.bitbake
-      - match: '\n'
+      - match: '$'
         pop: true
 
 # ------------------------------------------------------------------------------
@@ -122,7 +123,7 @@ contexts:
   inline_python:
     - match: '\${@'
       embed: Packages/Python/Python.sublime-syntax
-      escape: '(?=})'
+      escape: '}'
 
   access_variable:
     - match: '\${{{builtin_variables}}}'
