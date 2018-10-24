@@ -26,7 +26,7 @@ contexts:
     - match: '.'
       scope: invalid.illegal
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
   comments:
     - match: '#'
@@ -91,7 +91,7 @@ contexts:
       - match: '$'
         pop: true
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
   strings:
     - match: "'"
@@ -120,10 +120,14 @@ contexts:
     - match: '\\[\S\s]' # Use whitespace and non-whitespace because '.' doesn't match line breaks
       scope: constant.character.escape.bitbake
 
+  # TODO: Clear scope during python syntax
   inline_python:
     - match: '\${@'
+      scope: support.function.bitbake
       embed: Packages/Python/Python.sublime-syntax
       escape: '}'
+      escape_captures:
+        0: support.function.bitbake
 
   access_variable:
     - match: '\${{{builtin_variables}}}'
