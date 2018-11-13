@@ -38,27 +38,30 @@ contexts:
 
   # TODO: Highlight parameters
   function_defnitions:
-    - match: '^(def)\s+(\w+)\s*\(.*\)\s*:$'
+    - match: '^(?:(fakeroot)\s+)?(def)\s+(\S+)\s*\(.*\)\s*:$'
       captures:
-        1: storage.type.bitbake
-        2: entity.name.function.bitbake
+        1: storage.modifier.bitbake
+        2: storage.type.bitbake
+        3: entity.name.function.bitbake
       set: Packages/Python/Python.sublime-syntax
       with_prototype:
       - match: '^(?=\S)'
         pop: true
 
-    - match: '^(python)(?:\s+(\w+))?\s*\(\)\s*{$'
+    - match: '^(?:(fakeroot)\s+)?(python)(?:\s+(\S+))?\s*\(\)\s*{$'
       captures:
-        1: storage.type.bitbake
-        2: entity.name.function.bitbake
+        1: storage.modifier.bitbake
+        2: storage.type.bitbake
+        3: entity.name.function.bitbake
       set: Packages/Python/Python.sublime-syntax
       with_prototype:
       - match: '^}$'
         pop: true
 
-    - match: '^(\w+)\s*\(\)\s*{$'
+    - match: '^(?:(fakeroot)\s+)?(\S+)\s*\(\)\s*{$'
       captures:
-        1: entity.name.function.bitbake
+        1: storage.modifier.bitbake
+        2: entity.name.function.bitbake
       set: Packages/ShellScript/Shell-Unix-Generic.sublime-syntax
       with_prototype:
       - match: '^}$'
